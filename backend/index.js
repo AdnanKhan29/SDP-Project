@@ -1,40 +1,37 @@
 const express = require('express');
+const jwt = require('jsonwebtoken')
+const User = require('./user')
 const app = express();
 const cors = require('cors');
 app.use(express.json());
 app.use(cors());
 
-let tokens = [
-    {token : 'test.123'}
-]
-
-let users = [
-  { 
-    name : "Abdul",
-    username : "abdul123",
-    email : "abdul@gmail.com",
-    token : "test.123"
-  }
-]
-
 app.get('/login', (req, res) => {
-    res.send(tokens);
+  User.find({}).then(result=>{
+    res.json(result)
+  })
   });
 
-app.post('/login',(req,res)=>{
-    const newToken= { token: req.body.token}
-    
-    tokens=tokens.concat(newToken)
-    res.send(tokens)
+app.post('/new-login',(req,res)=>{
+    const body= req.body
+    const newToken = jwt.sign(req.body,'ABCXYZ')
+   
+    const user= new User({
+    username : body.username,
+    email : body.email,
+    password :body.password,
+    token : newToken,
+})
+
+    user.save().then(savedUser=>{
+      res.json(savedUser)
+    }).catch(error=> console.log(error))
 });
 
 app.get('/users', (req, res) => {
-  res.send(users);
+  User.find({}).then(result=>{
+    res.json(result)
+  })
 });
 
-app.post('/users',(req,res)=>{
-  const newUser = req.body
-  users=users.concat(newUser)
-  res.send(users)
-});
-  app.listen(3001, () => console.log('API is running on http://localhost:3001/login'));
+  app.listen(3001, () => console.log('Server is running on http://localhost:3001'));

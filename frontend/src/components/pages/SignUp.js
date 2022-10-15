@@ -11,7 +11,7 @@ import Checkbox from '@mui/material/Checkbox';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios'
-const Signup = (props) => {
+const Signup = (setToken,setUser) => {
   const [validated, setValidated] = useState(false);
   const [username, setUserName] = useState();
   const [email, setEmail] = useState();
@@ -29,23 +29,19 @@ const Signup = (props) => {
       event.stopPropagation();
     }
     else{
-     const newToken= {
-      token : `${username}.${password}`
-     }
-      axios.post('http://localhost:3001/login',newToken).then(response=>{
-        console.log(response.data) 
-      })
 
       const newUser={
         username : username,
         email : email,
         gender : gender,
         phno : phno,
-        token : `${username}.${password}`
+        password : password,
       }
 
-      axios.post('http://localhost:3001/users',newUser).then(response=>{
+      axios.post('http://localhost:3001/new-login',newUser).then(response=>{
         console.log(`${response.data.name} added successfully`)
+        setToken({token : response.data.token})
+        setUser(response.data)
       })
     
     }
@@ -75,7 +71,7 @@ const Signup = (props) => {
                         </RadioGroup>
                     </FormControl>
                     <TextField style={{margin:'5px'}} onChange={e => setPhno(e.target.value)} fullWidth label='Phone Number' placeholder="Enter your phone number" />
-                    <TextField style={{margin:'5px'}} onChange={e => setPassword(e.target.value)} type='password' fullWidth label='Password' placeholder="Enter your password"/>
+                    <TextField style={{margin:'5px'}} onChange={e => setPassword(e.target.value)} type='password' fullWidth label='Password' placeholder="Enter your password" hasValidation/>
                     <TextField style={{margin:'5px'}} onChange={e => setPassword(e.target.value)} type='password' fullWidth label='Confirm Password' placeholder="Confirm your password"/>
                     <FormControlLabel
                         control={<Checkbox name="checkedA" />}

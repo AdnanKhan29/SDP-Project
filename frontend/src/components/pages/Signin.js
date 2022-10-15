@@ -24,14 +24,17 @@ const Signin=(props)=>{
     else{
       axios.get('http://localhost:3001/login').then(response=>{
         
-        console.log(props.token)
-        if(response.data.filter(data=> data.token===`${username}.${password}`).length===0)
+        const findUser = response.data.filter(user=> user.username === username && user.password === password)
+      
+        if(findUser.length !== 1)
         {
-          alert("You either don't have an account or invalid credentials")
+          alert("Invalid Login Credentials")
         }
         else{
-          const newToken=response.data.filter(data=> data.token===`${username}.${password}`)
-          props.setToken(newToken[0])
+          console.log(response.data)
+
+          props.setToken({token : findUser[0].token})
+          props.setUser(findUser[0])
           window.location.reload(false);
         }
       })
@@ -51,8 +54,8 @@ const Signin=(props)=>{
                     <h2>Sign In</h2>
                 </Grid>
                 <form noValidate validated={validated}>
-                <TextField style={{margin: '5px'}} hasValidation onChange={e => setUserName(e.target.value)} label='Username' placeholder='Enter username' fullWidth required/>
-                <TextField style={{margin: '5px'}} onChange={e => setPassword(e.target.value)} label='Password' placeholder='Enter password' type='password' fullWidth required/>
+                <TextField style={{margin: '5px'}}  onChange={e => setUserName(e.target.value)} label='Username' placeholder='Enter username' fullWidth required hasValidation/>
+                <TextField style={{margin: '5px'}} onChange={e => setPassword(e.target.value)} label='Password' placeholder='Enter password' type='password' fullWidth required hasValidation/>
                 <FormControlLabel
                     control={
                     <Checkbox
