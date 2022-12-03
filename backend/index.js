@@ -3,8 +3,13 @@ const jwt = require('jsonwebtoken')
 const User = require('./user')
 const app = express();
 const cors = require('cors');
+const PORT = process.env.PORT || 3001
+
+
 app.use(express.json());
 app.use(cors());
+app.use(express.static('build'))
+
 
 app.get('/login', (req, res) => {
   User.find({}).then(result=>{
@@ -34,4 +39,7 @@ app.get('/users', (req, res) => {
   })
 });
 
-  app.listen(3001, () => console.log('Server is running on http://localhost:3001'));
+app.listen(PORT, () => 
+{
+ console.log(`Server running on port ${PORT}`)
+ })
